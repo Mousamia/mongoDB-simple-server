@@ -31,14 +31,27 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
-    const myDB = client.db("usersDB");
-    const myColl = myDB.collection("users");
+    const myColl = client.db("usersDB").collection('users');
+    app.get('/users', async(req, res) => {
+      const cursor = myColl.find()
+      const result = await cursor.toArray();
+      res.send(result);
+    })
 
     app.post('/users', async (req, res) => {
       const user = req.body;
       console.log(user);
 
       const result = await myColl.insertOne(user);
+      res.send(result);
+    })
+
+
+    app.delete('/users/:id', async (req, res) => {
+      const id = req.params.id;
+      console.log("please delete this id", id)
+      const query = { _id : id}
+      const result = await myColl.deleteOne(query);
       res.send(result);
     })
 
