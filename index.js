@@ -12,7 +12,7 @@ app.use(express.json())
 
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId} = require('mongodb');
 const uri = "mongodb+srv://samiamou96:ZKKrUQk7kXdpT0Xo@cluster0.un1xhdi.mongodb.net/?retryWrites=true&w=majority";
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -38,6 +38,14 @@ async function run() {
       res.send(result);
     })
 
+    app.get('/users/:id', async(req,res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      console.log(query);
+      const user = await myColl.findOne(query);
+      res.send(user); 
+    })
+
     app.post('/users', async (req, res) => {
       const user = req.body;
       console.log(user);
@@ -50,9 +58,11 @@ async function run() {
     app.delete('/users/:id', async (req, res) => {
       const id = req.params.id;
       console.log("please delete this id", id)
-      const query = { _id : id}
+      const query = { _id : new ObjectId(id)}
       const result = await myColl.deleteOne(query);
+      
       res.send(result);
+      
     })
 
 
